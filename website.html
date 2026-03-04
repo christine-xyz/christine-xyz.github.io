@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Name — Designer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Suisse+Int%27l+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f2ed;
+      --ink: #1a1a18;
+      --muted: #9a9690;
+      --accent: #c8b89a;
+      --border: #e2ddd8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.7;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: var(--ink);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.35s cubic-bezier(.16,1,.3,1), width 0.3s, height 0.3s, opacity 0.3s;
+      transform: translate(-50%, -50%);
+      opacity: 0.4;
+    }
+    a:hover ~ .cursor-ring, .cursor-ring.hovered {
+      width: 56px; height: 56px; opacity: 0.15;
+    }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 3rem;
+      mix-blend-mode: normal;
+    }
+
+    .nav-logo {
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+      padding: 0 3rem 4rem;
+      position: relative;
+    }
+
+    .hero-text {
+      padding-top: 12rem;
+    }
+
+    .hero-label {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-name {
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.35s forwards;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    .hero-tagline {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-top: 1.5rem;
+      max-width: 340px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s forwards;
+    }
+
+    .hero-cta {
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.65s forwards;
+    }
+
+    .hero-cta a {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .hero-cta a:hover { color: var(--muted); border-color: var(--muted); }
+
+    .hero-meta {
+      align-self: end;
+      text-align: right;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+    }
+
+    .hero-meta p {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      line-height: 2;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 1s 1.2s forwards;
+    }
+
+    .scroll-hint span {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: var(--accent);
+      animation: scrollPulse 2s 2s infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleY(1); opacity: 0.5; }
+      50% { transform: scaleY(0.4); opacity: 1; }
+    }
+
+    /* Divider */
+    .divider {
+      width: calc(100% - 6rem);
+      margin: 0 3rem;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Work section */
+    section {
+      padding: 6rem 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      font-family: 'Suisse Int\'l Mono', monospace;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .section-count {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--border);
+    }
+
+    /* Project grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      cursor: none;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .project-card:nth-child(1) { grid-column: 1 / 8; }
+    .project-card:nth-child(2) { grid-column: 8 / 13; }
+    .project-card:nth-child(3) { grid-column: 1 / 5; margin-top: 1.5rem; }
+    .project-card:nth-child(4) { grid-column: 5 / 10; margin-top: 1.5rem; }
+    .project-card:nth-child(5) { grid-column: 10 / 13; margin-top: 1.5rem; }
+
+    .project-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: var(--border);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .project-card:nth-child(2) .project-image { aspect-ratio: 3/4; }
+    .project-card:nth-child(5) .project-image { aspect-ratio: 1/1; }
+
+    .project-image-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #e8e4df 0%, #d5cfc9 100%);
+      transition: transform 0.6s cubic-bezier(.16,1,.3,1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-image-inner svg {
+      opacity: 0.25;
+      width: 40px;
+      height: 40px;
+    }
+
+    .project-card:hover .project-image-inner { transform: scale(1.04); }
+
+    .project-num {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+
+    .project-title {
+      font-size: 1.2rem;
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.3rem;
+    }
+
+    .project-tags {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* About */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .about-left h2 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+
+    .about-left h2 em { font-style: italic; color: var(--muted); }
+
+    .about-right p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .about-right p strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .skills-list {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.25rem 2rem;
+    }
+
+    .skill-item {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Contact */
+    #contact {
+      text-align: center;
+      padding: 8rem 3rem;
+    }
+
+    .contact-label {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .contact-heading {
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 3rem;
+    }
+
+    .contact-heading em { font-style: italic; color: var(--muted); }
+
+    .contact-links {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .contact-link:hover { color: var(--ink); }
+
+    /* Footer */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    footer p {
+      font-family: 'Suisse Int\'l Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { padding: 1.5rem; }
+      .hero { grid-template-columns: 1fr; padding: 0 1.5rem 3rem; }
+      .hero-meta { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .divider { width: calc(100% - 3rem); margin: 0 1.5rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card:nth-child(n) { grid-column: 1 / -1; margin-top: 0; }
+      #about { grid-template-columns: 1fr; gap: 2rem; }
+      #contact { padding: 5rem 1.5rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-logo">Your Name</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="hero-label">Designer & Artist — Est. 2024</p>
+      <h1 class="hero-name">Your<br><em>Name</em></h1>
+      <p class="hero-tagline">Crafting visual experiences at the intersection of art and design.</p>
+      <div class="hero-cta">
+        <a href="#work">View selected work ↓</a>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <p>Based in New York</p>
+      <p>Available for projects</p>
+      <p>——</p>
+      <p>Branding · UI · Art Direction</p>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Work -->
+  <section id="work">
+    <div class="section-header reveal">
+      <span class="section-title">Selected Work</span>
+      <span class="section-count">005</span>
+    </div>
+
+    <div class="projects-grid">
+
+      <a class="project-card reveal" href="#">
+        <div class="project-image">
+          <div class="project-image-inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+        </div>
+        <p class="project-num">001</p>
+        <h3 class="project-title">Brand Identity — Studio Novo</h3>
+        <p class="project-tags">Branding · Print · Identity</p>
+      </a>
+
+      <a class="project-card reveal" href="#">
+        <div class="project-image">
+          <div class="project-image-inner" style="background: linear-gradient(135deg, #ddd8d2 0%, #cac3bb 100%)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg>
+          </div>
+        </div>
+        <p class="project-num">002</p>
+        <h3 class="project-title">Campaign — Maison Éclat</h3>
+        <p class="project-tags">Art Direction · Photography</p>
+      </a>
+
+      <a class="project-card reveal" href="#">
+        <div class="project-image">
+          <div class="project-image-inner" style="background: linear-gradient(135deg, #e2ddd7 0%, #d0c9c1 100%)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+        </div>
+        <p class="project-num">003</p>
+        <h3 class="project-title">UI Design — Forma App</h3>
+        <p class="project-tags">UI · Product Design</p>
+      </a>
+
+      <a class="project-card reveal" href="#">
+        <div class="project-image">
+          <div class="project-image-inner" style="background: linear-gradient(135deg, #dbd5ce 0%, #c9c1b8 100%)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          </div>
+        </div>
+        <p class="project-num">004</p>
+        <h3 class="project-title">Editorial — Volume Magazine</h3>
+        <p class="project-tags">Editorial · Typography</p>
+      </a>
+
+      <a class="project-card reveal" href="#">
+        <div class="project-image">
+          <div class="project-image-inner" style="background: linear-gradient(135deg, #e6e1db 0%, #d4cdc6 100%)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+        </div>
+        <p class="project-num">005</p>
+        <h3 class="project-title">Poster Series</h3>
+        <p class="project-tags">Print · Illustration</p>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- About -->
+  <section>
+    <div id="about">
+      <div class="about-left reveal">
+        <h2>Design that<br><em>speaks</em><br>without noise.</h2>
+      </div>
+      <div class="about-right reveal">
+        <p>I'm <strong>Your Name</strong>, a designer and artist based in New York. I work with brands, studios, and individuals to create thoughtful visual identities and experiences.</p>
+        <p>My work lives at the intersection of <strong>craft and concept</strong> — where every detail serves a purpose and nothing is accidental.</p>
+        <p>Currently available for freelance projects and collaborations.</p>
+        <div class="skills-list">
+          <span class="skill-item">Brand Identity</span>
+          <span class="skill-item">Art Direction</span>
+          <span class="skill-item">UI / UX Design</span>
+          <span class="skill-item">Editorial Design</span>
+          <span class="skill-item">Typography</span>
+          <span class="skill-item">Illustration</span>
+          <span class="skill-item">Motion Design</span>
+          <span class="skill-item">Print Design</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Contact -->
+  <section id="contact">
+    <p class="contact-label reveal">Get in touch</p>
+    <h2 class="contact-heading reveal">Let's make<br><em>something</em>.</h2>
+    <div class="contact-links reveal">
+      <a class="contact-link" href="mailto:hello@yourname.com">hello@yourname.com</a>
+      <a class="contact-link" href="#">Instagram</a>
+      <a class="contact-link" href="#">Behance</a>
+      <a class="contact-link" href="#">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Your Name</p>
+    <p>Designed & built by you</p>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    (function animRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+
+    document.querySelectorAll('a').forEach(a => {
+      a.addEventListener('mouseenter', () => ring.classList.add('hovered'));
+      a.addEventListener('mouseleave', () => ring.classList.remove('hovered'));
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
