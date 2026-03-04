@@ -6,6 +6,11 @@
   <title>Christine Pang</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet"/>
   <style>
+    @font-face {
+  font-family: 'URWClassicSans';
+  src: url('fonts/URWClassicSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -19,9 +24,9 @@
     body {
       background: var(--bg);
       color: var(--ink);
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: 'URWClassicSans', sans-serif;
       font-weight: 300;
-      font-size: 14px;
+      font-size: 16px;
       min-height: 100vh;
     }
 
@@ -39,7 +44,7 @@
     }
 
     .sidebar-name {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 400;
       letter-spacing: 0.02em;
       margin-bottom: 28px;
@@ -53,7 +58,7 @@
 
     .project-list li {
       margin-bottom: 6px;
-      font-size: 13px;
+      font-size: 15px;
       line-height: 1.5;
     }
 
@@ -73,7 +78,7 @@
     }
 
     .sidebar-links a {
-      font-size: 13px;
+      font-size: 15px;
       color: var(--ink);
       text-decoration: none;
       transition: opacity 0.15s;
@@ -102,7 +107,7 @@
     }
 
     .caption {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       margin-top: 5px;
       text-align: center;
@@ -168,13 +173,13 @@
 <body>
 
   <aside class="sidebar">
-    <div class="sidebar-name">YOUR NAME</div>
+    <div class="sidebar-name">CHRISTINE PANG</div>
 
     <ol class="project-list">
       <li><a href="about.html">1. About</a></li>
       <li><a href="#">2. Ten Today</a></li>
-      <li><a href="#">3. Dirt Relics – <span class="blue">p.1</span></a></li>
-      <li><a href="#">4. Furniture and design – <span class="blue">p.2</span></a></li>
+      <li><a href="#">3. Dirt Relics</a></li>
+      <li><a href="#">4. Furniture and design</a></li>
       <li><a href="#">5. Links</a></li>
       <li><a href="#">6. Recipes</a></li>
       <li><a href="contact.html">7. Contact</a></li>
